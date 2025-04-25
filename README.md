@@ -72,6 +72,15 @@ Console.WriteLine($"Dot product: {dot}");
 
 ## Benchmarks
 
+```
+BenchmarkDotNet v0.14.0, Fedora Linux 42 (Workstation Edition)
+11th Gen Intel Core i5-1135G7 2.40GHz, 1 CPU, 8 logical and 4 physical cores
+.NET SDK 9.0.104
+[Host]     : .NET 9.0.3 (9.0.325.11113), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+DefaultJob : .NET 9.0.3 (9.0.325.11113), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+```
+
+
 1.000x1.000 matrix benchmark results (using BenchmarkDotNet):
 ```
 | Method         | Mean         | Error       | StdDev      | Median       | Gen0     | Gen1     | Gen2     | Allocated |
