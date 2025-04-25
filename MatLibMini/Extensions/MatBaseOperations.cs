@@ -1,7 +1,7 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-namespace KerasMini.Extensions;
+namespace MatLibMini.Extensions;
 
 public static class MatBaseOperations
 {

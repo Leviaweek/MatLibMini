@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace KerasMini.Extensions;
+namespace MatLibMini.Extensions;
 
 public static class VecSharedOperations
 {

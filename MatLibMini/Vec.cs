@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Numerics;
 using System.Text;
-using KerasMini.Extensions;
+using MatLibMini.Extensions;
 
-namespace KerasMini;
+namespace MatLibMini;
 
 public sealed class Vec<T>: IEnumerable<T> where T: INumber<T>
 {

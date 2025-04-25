@@ -1,7 +1,7 @@
 using System.Numerics;
 using System.Text;
 
-namespace KerasMini;
+namespace MatLibMini;
 
 public sealed class Mat<T> where T: unmanaged, INumber<T>
 {
