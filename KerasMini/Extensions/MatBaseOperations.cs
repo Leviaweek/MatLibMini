@@ -64,52 +64,6 @@ public static class MatBaseOperations
             matrix1Span[i] *= scalar;
     }
     
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-    [SkipLocalsInit]
-    public static Mat<T> MultiplyTest<T>(this Mat<T> matrix1, Mat<T> matrix2) where T : unmanaged, INumber<T>
-    {
-        if (matrix1.Width != matrix2.Height)
-            throw new ArgumentException("Matrix1 width must be equal to Matrix2 height.");
-
-        var width = matrix2.Width;
-        var height = matrix1.Height;
-        var commonDim = matrix1.Width;
-        var resultMatrix = new Mat<T>(width, height);
-
-        ReadOnlySpan<T> values1Span = matrix1.Values;
-        var resultSpan = resultMatrix.Values.AsSpan();
-
-        ReadOnlySpan<T> transposedValues2 = matrix2.Transpose().Values;
-
-        var vectorSize = Vector<T>.Count;
-
-        for (var i = 0; i < height; i++)
-        {
-            for (var j = 0; j < width; j++)
-            {
-                var sumVector = Vector<T>.Zero;
-                var k = 0;
-
-                for (; k <= commonDim - vectorSize; k += vectorSize)
-                {
-                    var vec1 = new Vector<T>(values1Span.Slice(i * commonDim + k, vectorSize));
-                    var vec2 = new Vector<T>(transposedValues2.Slice(j * commonDim + k, vectorSize));
-                    sumVector += vec1 * vec2;
-                }
-
-                var scalarSum = Vector.Sum(sumVector);
-
-                for (; k < commonDim; k++)
-                {
-                    scalarSum += values1Span[i * commonDim + k] * transposedValues2[j * commonDim + k];
-                }
-
-                resultSpan[i * width + j] = scalarSum;
-            }
-        }
-
-        return resultMatrix;
-    }
     
     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     [SkipLocalsInit]
