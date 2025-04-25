@@ -8,6 +8,9 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <AssemblyName>MatLibMini</AssemblyName>
         <RootNamespace>MatLibMini</RootNamespace>
+        <Title>Lib with base Mat structures</Title>
+        <Description>Base Mat&lt;&gt; and Vec&lt;&gt; structures with optimized math</Description>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
 </Project>
