@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Text;
+using MatLibMini.Extensions;
 
 namespace MatLibMini;
 
@@ -40,6 +41,18 @@ public sealed class Mat<T> where T: unmanaged, INumber<T>
     {
         return obj.Width == Width && obj.Height == Height && obj.Values.AsSpan().SequenceEqual(Values.AsSpan());
     }
+    
+    public static Mat<T> operator +(Mat<T> matrix1, Mat<T> matrix2) => matrix1.Clone().Add(matrix2);
+
+    public static Mat<T> operator +(Mat<T> matrix1, T scalar) => matrix1.Clone().Add(scalar);
+
+    public static Mat<T> operator *(Mat<T> matrix, T scalar) => matrix.Clone().Multiply(scalar);
+
+    public static Mat<T> operator *(Mat<T> matrix1, Mat<T> matrix2) => matrix1.Clone().Multiply(matrix2);
+
+    public static Mat<T> operator -(Mat<T> matrix1, Mat<T> matrix2) => matrix1.Clone().Subtract(matrix2);
+
+    public static Mat<T> operator -(Mat<T> matrix, T scalar) => matrix.Clone().Subtract(scalar);
 
     public override string ToString()
     {
@@ -55,4 +68,6 @@ public sealed class Mat<T> where T: unmanaged, INumber<T>
         }
         return sb.ToString();
     }
+    
+    public Mat<T> Clone() => new(this);
 }

@@ -1,3 +1,4 @@
 ﻿<Solution>
+  <Project Path="Benchmarks\Benchmarks.csproj" Type="Classic C#" />
   <Project Path="MatLibMini\MatLibMini.csproj" Type="Classic C#" />
 </Solution>

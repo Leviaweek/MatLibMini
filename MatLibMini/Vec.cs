@@ -29,17 +29,17 @@ public sealed class Vec<T>: IEnumerable<T> where T: INumber<T>
         set => Values[index] = value;
     }
 
-    public static Vec<T> operator +(Vec<T> vector1, Vec<T> vector2) => vector1.Clone().Add(vector2);
+    public static Vec<T> operator +(Vec<T> vector, Vec<T> vector2) => vector.Clone().Add(vector2);
 
-    public static Vec<T> operator +(Vec<T> vector1, T scalar) => vector1.Clone().Add(scalar);
+    public static Vec<T> operator +(Vec<T> vector, T scalar) => vector.Clone().Add(scalar);
 
-    public static Vec<T> operator *(Vec<T> vec, T scalar) => vec.Clone().Multiply(scalar);
+    public static Vec<T> operator *(Vec<T> vector, T scalar) => vector.Clone().Multiply(scalar);
 
     public static Vec<T> operator *(Vec<T> vector1, Vec<T> vector2) => vector1.Clone().Multiply(vector2);
 
-    public static Vec<T> operator -(Vec<T> vector1, Vec<T> vector2) => vector1.Clone().Subtract(vector2);
+    public static Vec<T> operator -(Vec<T> vector, Vec<T> vector2) => vector.Clone().Subtract(vector2);
 
-    public static Vec<T> operator -(Vec<T> vector1, T scalar) => vector1.Clone().Subtract(scalar);
+    public static Vec<T> operator -(Vec<T> vector, T scalar) => vector.Clone().Subtract(scalar);
 
 
     public IEnumerator<T> GetEnumerator()

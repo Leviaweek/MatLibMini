@@ -7,7 +7,7 @@ public static class MatBaseOperations
 {
     private const int BlockSize = 256;
 
-    public static void Add<T>(this Mat<T> matrix1, T scalar) where T : unmanaged, INumber<T>
+    public static Mat<T> Add<T>(this Mat<T> matrix1, T scalar) where T : unmanaged, INumber<T>
     {
         Span<T> matrixSpan = matrix1.Values;
 
@@ -23,9 +23,11 @@ public static class MatBaseOperations
         
         for (; i < matrix1.Values.Length; i++)
             matrixSpan[i] += scalar;
+        
+        return matrix1;
     }
     
-    public static void Add<T>(this Mat<T> matrix1, Mat<T> matrix2) where T : unmanaged, INumber<T>
+    public static Mat<T> Add<T>(this Mat<T> matrix1, Mat<T> matrix2) where T : unmanaged, INumber<T>
     {
         ValidateSameSize(matrix1, matrix2);
         
@@ -44,9 +46,11 @@ public static class MatBaseOperations
         
         for (; i < matrix1.Values.Length; i++)
             matrix1Span[i] += matrix2Span[i];
+        
+        return matrix1;
     }
 
-    public static void Multiply<T>(this Mat<T> matrix1, T scalar) where T : unmanaged, INumber<T>
+    public static Mat<T> Multiply<T>(this Mat<T> matrix1, T scalar) where T : unmanaged, INumber<T>
     {
         Span<T> matrix1Span = matrix1.Values;
         var i = 0;
@@ -61,6 +65,8 @@ public static class MatBaseOperations
         
         for (; i < matrix1.Values.Length; i++)
             matrix1Span[i] *= scalar;
+        
+        return matrix1;
     }
     
     
@@ -146,6 +152,73 @@ public static class MatBaseOperations
         return resultMatrix;
     }
 
+    public static T Sum<T>(this Mat<T> matrix) where T : unmanaged, INumber<T>
+    {
+        ReadOnlySpan<T> values = matrix.Values;
+
+        var sumVector = Vector<T>.Zero;
+        
+        var vectorSize = Vector<T>.Count;
+        
+        var i = 0;
+        
+        for (; i <= values.Length - vectorSize; i += vectorSize)
+        {
+            var vec1 = new Vector<T>(values.Slice(i, vectorSize));
+            sumVector += vec1;
+        }
+        
+        var sum = Vector.Sum(sumVector);
+        
+        for (; i < values.Length; i++)
+            sum += values[i];
+        
+        return sum;
+    }
+    
+    public static Mat<T> Subtract<T>(this Mat<T> matrix1, T scalar) where T : unmanaged, INumber<T>
+    {
+        Span<T> matrixSpan = matrix1.Values;
+
+        var i = 0;
+        var matrixSize = Vector<T>.Count;
+        
+        for (; i <= matrix1.Values.Length - matrixSize; i += matrixSize)
+        {
+            var vec = new Vector<T>(matrixSpan.Slice(i, matrixSize));
+            var vec2 = new Vector<T>(scalar);
+            (vec - vec2).CopyTo(matrixSpan.Slice(i, matrixSize));
+        }
+        
+        for (; i < matrix1.Values.Length; i++)
+            matrixSpan[i] -= scalar;
+        
+        return matrix1;
+    }
+    
+    public static Mat<T> Subtract<T>(this Mat<T> matrix1, Mat<T> matrix2) where T : unmanaged, INumber<T>
+    {
+        ValidateSameSize(matrix1, matrix2);
+        
+        Span<T> matrix1Span = matrix1.Values;
+        ReadOnlySpan<T> matrix2Span = matrix2.Values;
+
+        var i = 0;
+        var matrixSize = Vector<T>.Count;
+        
+        for (; i <= matrix1.Values.Length - matrixSize; i += matrixSize)
+        {
+            var vec1 = new Vector<T>(matrix1Span.Slice(i, matrixSize));
+            var vec2 = new Vector<T>(matrix2Span.Slice(i, matrixSize));
+            (vec1 - vec2).CopyTo(matrix1Span.Slice(i, matrixSize));
+        }
+        
+        for (; i < matrix1.Values.Length; i++)
+            matrix1Span[i] -= matrix2Span[i];
+        
+        return matrix1;
+    }
+    
     public static Vec<T> Flatten<T>(this Mat<T> matrix) where T: unmanaged, INumber<T> => Vec<T>.From(matrix.Values);
 
     private static void ValidateSameSize<T>(Mat<T> mat1, Mat<T> mat2) where T : unmanaged, INumber<T>
