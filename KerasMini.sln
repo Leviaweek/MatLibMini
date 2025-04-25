@@ -2,10 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KerasMini", "KerasMini\KerasMini.csproj", "{3D91625A-A564-4CDF-831B-4F09FC81CCEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VectorTests", "VectorTests\VectorTests.csproj", "{5885957E-A347-4F6D-9CE8-C3F232BD93FA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{C28380E6-120B-4E40-BAE5-9CFCD51527D2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -16,13 +12,5 @@ Global
 		{3D91625A-A564-4CDF-831B-4F09FC81CCEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D91625A-A564-4CDF-831B-4F09FC81CCEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D91625A-A564-4CDF-831B-4F09FC81CCEC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5885957E-A347-4F6D-9CE8-C3F232BD93FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5885957E-A347-4F6D-9CE8-C3F232BD93FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5885957E-A347-4F6D-9CE8-C3F232BD93FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5885957E-A347-4F6D-9CE8-C3F232BD93FA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C28380E6-120B-4E40-BAE5-9CFCD51527D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C28380E6-120B-4E40-BAE5-9CFCD51527D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C28380E6-120B-4E40-BAE5-9CFCD51527D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C28380E6-120B-4E40-BAE5-9CFCD51527D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

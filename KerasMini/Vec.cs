@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Numerics;
 using System.Text;
+using KerasMini.Extensions;
 
 namespace KerasMini;
 
@@ -8,27 +9,15 @@ public sealed class Vec<T>: IEnumerable<T> where T: INumber<T>
 {
     internal readonly T[] Values;
     
-    public Vec(params ReadOnlySpan<T> values)
+    private Vec(ReadOnlySpan<T> values)
     {
         Values = new T[values.Length];
         values.CopyTo(Values);
     }
-    
-    public Vec(Vec<T> vector)
-    {
-        Values = new T[vector.Length];
-        vector.Values.CopyTo(Values.AsMemory());
-    }
-    
-    public Vec(IEnumerable<T> values)
-    {
-        Values = values.ToArray();
-    }
-    
+
     public Vec(int size)
     {
         Values = new T[size];
-        
         Values.AsSpan().Fill(T.Zero);
     }
     
@@ -40,35 +29,17 @@ public sealed class Vec<T>: IEnumerable<T> where T: INumber<T>
         set => Values[index] = value;
     }
 
-    public static Vec<T> operator +(Vec<T> vector1, Vec<T> vector2)
-    {
-        var result = new Vec<T>(vector1);
-        result.Add(vector2);
-        return result;
-    }
+    public static Vec<T> operator +(Vec<T> vector1, Vec<T> vector2) => vector1.Clone().Add(vector2);
 
-    public static Vec<T> operator +(Vec<T> vector1, T scalar)
-    {
-        var result = new Vec<T>(vector1);
-        result.Add(scalar);
-        return result;
-    }
+    public static Vec<T> operator +(Vec<T> vector1, T scalar) => vector1.Clone().Add(scalar);
 
-    public static Vec<T> operator *(Vec<T> vec, T scalar)
-    {
-        var result = new Vec<T>(vec);
-        
-        result.Multiply(scalar);
-        
-        return result;
-    }
+    public static Vec<T> operator *(Vec<T> vec, T scalar) => vec.Clone().Multiply(scalar);
 
-    public static Vec<T> operator *(Vec<T> vector1, Vec<T> vector2)
-    {
-        var result = new Vec<T>(vector1);
-        result.Multiply(vector2);
-        return result;
-    }
+    public static Vec<T> operator *(Vec<T> vector1, Vec<T> vector2) => vector1.Clone().Multiply(vector2);
+
+    public static Vec<T> operator -(Vec<T> vector1, Vec<T> vector2) => vector1.Clone().Subtract(vector2);
+
+    public static Vec<T> operator -(Vec<T> vector1, T scalar) => vector1.Clone().Add(scalar);
 
 
     public IEnumerator<T> GetEnumerator()
@@ -103,6 +74,12 @@ public sealed class Vec<T>: IEnumerable<T> where T: INumber<T>
     {
         return GetEnumerator();
     }
+    
+    public Span<T> AsSpan() => Values;
+    public Vec<T> Clone() => new(Values);
+    
+    public static Vec<T> From(params ReadOnlySpan<T> span) => new(span);
+    public static Vec<T> From(Vec<T> vector) => new(vector.Values);
 }
 
 public sealed class VecEnumerator<T>: IEnumerator<T> where T: INumber<T>

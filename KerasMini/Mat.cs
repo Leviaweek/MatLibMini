@@ -35,10 +35,10 @@ public sealed class Mat<T> where T: unmanaged, INumber<T>
         get => Values[row * Width + column];
         set => Values[row * Width + column] = value;
     }
-
+    
     public bool Equals(Mat<T> obj)
     {
-        return obj.Width == Width && obj.Height == Height && obj.Values.AsSpan().SequenceEqual(Values);
+        return obj.Width == Width && obj.Height == Height && obj.Values.AsSpan().SequenceEqual(Values.AsSpan());
     }
 
     public override string ToString()

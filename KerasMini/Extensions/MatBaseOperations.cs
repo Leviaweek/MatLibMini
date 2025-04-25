@@ -1,11 +1,13 @@
+using System.Management;
 using System.Numerics;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
+using System.Runtime.CompilerServices;
 
-namespace KerasMini;
+namespace KerasMini.Extensions;
 
 public static class MatBaseOperations
 {
+    private const int BlockSize = 256;
+
     public static void Add<T>(this Mat<T> matrix1, T scalar) where T : unmanaged, INumber<T>
     {
         Span<T> matrixSpan = matrix1.Values;
@@ -62,7 +64,9 @@ public static class MatBaseOperations
             matrix1Span[i] *= scalar;
     }
     
-    public static Mat<T> Multiply<T>(this Mat<T> matrix1, Mat<T> matrix2) where T : unmanaged, INumber<T>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    [SkipLocalsInit]
+    public static Mat<T> MultiplyTest<T>(this Mat<T> matrix1, Mat<T> matrix2) where T : unmanaged, INumber<T>
     {
         if (matrix1.Width != matrix2.Height)
             throw new ArgumentException("Matrix1 width must be equal to Matrix2 height.");
@@ -106,25 +110,76 @@ public static class MatBaseOperations
 
         return resultMatrix;
     }
+    
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+    [SkipLocalsInit]
+    public static unsafe Mat<T> Multiply<T>(this Mat<T> matrix1, Mat<T> matrix2) where T : unmanaged, INumber<T>
+    {
+        if (matrix1.Width != matrix2.Height)
+            throw new ArgumentException("Matrix1 width must be equal to Matrix2 height.");
 
+        var width = matrix2.Width;
+        var height = matrix1.Height;
+        var commonDim = matrix1.Width;
+        var resultMatrix = new Mat<T>(width, height);
+
+        var vectorSize = Vector<T>.Count;
+        var width2 = matrix2.Width;
+
+        fixed (T* mat1Ptr = matrix1.Values)
+        fixed (T* mat2Ptr = matrix2.Values)
+        fixed (T* resPtr = resultMatrix.Values)
+        {
+            for (var i = 0; i < height; i++)
+            {
+                var rowRes = resPtr + i * width;
+            
+                for (var k = 0; k < commonDim; k++)
+                {
+                    var val1 = mat1Ptr[i * commonDim + k];
+                    var row2 = mat2Ptr + k * width2;
+                
+                    var j = 0;
+                
+                    if (vectorSize > 1)
+                    {
+                        var vecVal1 = new Vector<T>(val1);
+                        for (; j <= width - vectorSize; j += vectorSize)
+                        {
+                            var vec2 = Vector.Load(row2 + j);
+                            var vecRes = Vector.Load(rowRes + j);
+                            vecRes += vecVal1 * vec2;
+                            vecRes.Store(rowRes + j);
+                        }
+                    }
+                
+                    for (; j < width; j++)
+                    {
+                        rowRes[j] += val1 * row2[j];
+                    }
+                }
+            }
+        }
+
+        return resultMatrix;
+    }
+    
 
     public static Mat<T> Transpose<T>(this Mat<T> matrix) where T : unmanaged, INumber<T>
     {
-        var resultMatrix = new Mat<T>(matrix.Width, matrix.Height);
+        var resultMatrix = new Mat<T>(matrix.Height, matrix.Width);
         var data = resultMatrix.Values.AsSpan();
         ReadOnlySpan<T> inputData = matrix.Values;
 
         var width = matrix.Width;
         var height = matrix.Height;
-        
-        const int blockSize = 64;
 
-        for (var i = 0; i < height; i += blockSize)
+        for (var i = 0; i < height; i += BlockSize)
         {
-            for (var j = 0; j < width; j += blockSize)
+            for (var j = 0; j < width; j += BlockSize)
             {
-                var maxI = Math.Min(i + blockSize, height);
-                var maxJ = Math.Min(j + blockSize, width);
+                var maxI = Math.Min(i + BlockSize, height);
+                var maxJ = Math.Min(j + BlockSize, width);
 
                 for (var ii = i; ii < maxI; ii++)
                 {
@@ -138,8 +193,8 @@ public static class MatBaseOperations
         return resultMatrix;
     }
 
+    public static Vec<T> Flatten<T>(this Mat<T> matrix) where T: unmanaged, INumber<T> => Vec<T>.From(matrix.Values);
 
-    
     private static void ValidateSameSize<T>(Mat<T> mat1, Mat<T> mat2) where T : unmanaged, INumber<T>
     {
         if (mat1.Width != mat2.Width || mat1.Height != mat2.Height)
