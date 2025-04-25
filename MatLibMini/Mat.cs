@@ -69,5 +69,12 @@ public sealed class Mat<T> where T: unmanaged, INumber<T>
         return sb.ToString();
     }
     
+    public static Mat<T> Fill(int width, int height, T value)
+    {
+        var matrix = new Mat<T>(width, height);
+        matrix.Values.AsSpan().Fill(value);
+        return matrix;
+    }
+    
     public Mat<T> Clone() => new(this);
 }
